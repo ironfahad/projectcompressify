@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  compressify:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./media:/workspace/input:ro
+      - ./output:/workspace/output
+    environment:
+      - COMPRESSIFY_LOG_LEVEL=INFO
+    command: ["compressify", "compress", "/workspace/input", "-o", "/workspace/output", "-r"]
+
+  compressify-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - ./media:/workspace/input:ro
+      - ./output:/workspace/output
+    environment:
+      - COMPRESSIFY_LOG_LEVEL=DEBUG
+    command: ["bash"]
+    stdin_open: true
+    tty: true
+
+volumes:
+  media:
+  output:

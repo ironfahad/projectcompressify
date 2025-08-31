@@ -1,0 +1,37 @@
+# Development image with additional tools
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Install Poetry
+RUN pip install poetry
+
+# Copy poetry files
+COPY pyproject.toml poetry.lock* ./
+
+# Configure poetry
+RUN poetry config virtualenvs.create false
+
+# Install dependencies
+RUN poetry install --with dev
+
+# Copy source code
+COPY . .
+
+# Install in development mode
+RUN pip install -e .
+
+# Set up workspace volume
+VOLUME ["/workspace", "/app"]
+WORKDIR /workspace
+
+# Default command
+CMD ["bash"]
